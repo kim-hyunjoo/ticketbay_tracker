@@ -1,0 +1,14 @@
+{
+  "name": "ticketbay-collector",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "collect": "npx tsx src/index.ts",
+    "search": "npx tsx src/search.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

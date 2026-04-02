@@ -1,0 +1,70 @@
+name: Collect & Deploy
+
+on:
+  schedule:
+    # 매일 한국시간 오전 9시 (UTC 0시)에 실행
+    - cron: "0 0 * * *"
+  workflow_dispatch: # 수동 실행도 가능
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 데이터 수집
+      - name: Install collector dependencies
+        working-directory: collector
+        run: npm install
+
+      - name: Collect ticket data
+        working-directory: collector
+        run: npm run collect
+
+      # 수집된 데이터 커밋
+      - name: Commit collected data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "data: $(date +%Y-%m-%d) 시세 수집"
+          git push
+
+  deploy:
+    needs: collect
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main # 수집 커밋 이후 최신 코드로 체크아웃
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 웹 빌드
+      - name: Install web dependencies
+        working-directory: web
+        run: npm install
+
+      - name: Build web
+        working-directory: web
+        run: npm run build
+
+      # GitHub Pages 배포
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
