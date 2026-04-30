@@ -42,7 +42,8 @@ export function ListingsClient({ concertMeta }: ListingsClientProps) {
     setFilterDate("all")
     setFilterArea("all")
     const { artist, category_id } = current.concert
-    fetch(`/data/${artist}_${category_id}/${selectedDate}.json`)
+    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
+    fetch(`${base}/data/${artist}_${category_id}/${selectedDate}.json`)
       .then((r) => r.json())
       .then((d: DailyData) => setData(d))
       .catch(() => setData(null))

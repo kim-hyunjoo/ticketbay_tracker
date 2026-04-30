@@ -58,6 +58,8 @@ jobs:
 
       - name: Build web
         working-directory: web
+        env:
+          NEXT_PUBLIC_BASE_PATH: /ticketbay_tracker
         run: npm run build
 
       # GitHub Pages 배포
