@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { GeistMono } from "geist/font/mono";
+import { NavDesktop, NavMobile } from "@/components/layout/nav";
 
 export const metadata: Metadata = {
   title: "TicketBay Tracker",
@@ -12,8 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="ko" className={`h-full antialiased ${GeistMono.variable}`}>
+      <body className="min-h-full flex flex-col">
+        <NavDesktop />
+        <main className="flex-1 pb-16 md:pb-0">{children}</main>
+        <NavMobile />
+      </body>
     </html>
   );
 }
